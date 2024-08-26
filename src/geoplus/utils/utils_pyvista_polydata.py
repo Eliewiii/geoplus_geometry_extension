@@ -9,7 +9,7 @@ from shapely.geometry import Polygon
 from typing import List, Tuple, Union
 
 
-def polydata_from_vertices(vertices: np.ndarray) -> PolyData:
+def make_polydata_from_vertices(vertices: np.ndarray) -> PolyData:
     """
     Create a PyVista PolyData object from vertices and faces.
     :param vertices: np.ndarray, the vertices of the PolyData object.
