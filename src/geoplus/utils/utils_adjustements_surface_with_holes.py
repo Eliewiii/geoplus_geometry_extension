@@ -8,18 +8,24 @@ import numpy as np
 from typing import List
 
 
-def closest_point_index(vertex_list: List[np.ndarray], target_vertex: np.ndarray) -> int:
+def contour_surface_with_holes(surface_boundary: List[List[int]], hole_list: List[List[List[int]]]):
     """
-    Find the index of the closest vertex to a target vertex in a list of vertices.
-    :param vertex_list: List of vertices in 2 or 3 dimensions, it must be consistent with the target vertex.
-    :param target_vertex: Target vertex in 2 or 3 dimensions.
-    :return closest_index: Index of the closest vertex to the target vertex.
+    Contour a surface with multiple holes to exclude the holes from the surface, especially useful for Radiance.
+    It assumes that the holes are closed loops of vertices with the same orientation as the surface and that the holes
+        don't intersect.
+    :param surface_boundary: List of vertices of the surface in 2 or 3 dimensions, it must be consistent with the holes.
+    :param hole_list: List of lists of vertices of the holes in 2 or 3 dimensions, it must be consistent with the surface.
+    :return new_surface_boundary: List of vertices of the contoured surface with the holes.
     """
-    distances = np.linalg.norm(vertex_list - target_vertex, axis=1)
-    return np.argmin(distances)
+    new_surface_boundary = surface_boundary
+    for hole in hole_list:
+        new_surface_boundary = _contour_surface_with_hole(new_surface_boundary, hole)
+
+    return new_surface_boundary
 
 
-def contour_surface_with_hole(surface_boundary: List[List[int]], hole_vertex_list: List[List[int]]) -> List[List[int]]:
+def _contour_surface_with_hole(surface_boundary: List[List[int]], hole_vertex_list: List[List[int]]) \
+        -> List[List[int]]:
     """
     Contour a surface with a hole to exclude the hole from the surface, especially useful for Radiance. The hole is
         assumed to be a closed loop of vertices with the same orientation as the surface.
@@ -34,30 +40,25 @@ def contour_surface_with_hole(surface_boundary: List[List[int]], hole_vertex_lis
     surface with an intersection """
     hole_vertices = hole_vertices[::-1]
     # Find the closest points on the surface and hole
-    surface_closest_index = closest_point_index(surface_vertices, hole_vertices[0])
-    hole_closest_index = closest_point_index(hole_vertices, surface_vertices[surface_closest_index])
+    surface_closest_index = _closest_point_index(surface_vertices, hole_vertices[0])
+    hole_closest_index = _closest_point_index(hole_vertices, surface_vertices[surface_closest_index])
     # Split and merge the surface boundary
     new_surface_boundary = np.concatenate([
         surface_vertices[:surface_closest_index + 1],
         hole_vertices[hole_closest_index:],
-        hole_vertices[:hole_closest_index+1],
+        hole_vertices[:hole_closest_index + 1],
         surface_vertices[surface_closest_index:]
     ])
 
     return new_surface_boundary
 
 
-def contour_surface_with_multiple_holes(surface_boundary:List[List[int]],hole_list:List[List[List[int]]] ):
+def _closest_point_index(vertex_list: List[np.ndarray], target_vertex: np.ndarray) -> int:
     """
-    Contour a surface with multiple holes to exclude the holes from the surface, especially useful for Radiance.
-    It assumes that the holes are closed loops of vertices with the same orientation as the surface and that the holes
-        don't intersect.
-    :param surface_boundary: List of vertices of the surface in 2 or 3 dimensions, it must be consistent with the holes.
-    :param hole_list: List of lists of vertices of the holes in 2 or 3 dimensions, it must be consistent with the surface.
-    :return new_surface_boundary: List of vertices of the contoured surface with the holes.
+    Find the index of the closest vertex to a target vertex in a list of vertices.
+    :param vertex_list: List of vertices in 2 or 3 dimensions, it must be consistent with the target vertex.
+    :param target_vertex: Target vertex in 2 or 3 dimensions.
+    :return closest_index: Index of the closest vertex to the target vertex.
     """
-    new_surface_boundary = surface_boundary
-    for hole in hole_list:
-        new_surface_boundary = contour_surface_with_hole(new_surface_boundary, hole)
-
-    return new_surface_boundary
+    distances = np.linalg.norm(vertex_list - target_vertex, axis=1)
+    return np.argmin(distances)
