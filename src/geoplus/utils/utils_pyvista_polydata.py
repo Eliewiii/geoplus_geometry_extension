@@ -35,6 +35,7 @@ def polydata_to_shapely(polydata):
 
     return polygon
 
+
 def get_faces_list_of_vertices(polydata_obj: PolyData) -> List[List[float]]:
     """
     Get the list of vertices for each face of the PolyData object.
@@ -45,12 +46,12 @@ def get_faces_list_of_vertices(polydata_obj: PolyData) -> List[List[float]]:
     points = polydata_obj.points
     # Extract the faces
     faces = polydata_obj.faces
-    face_list=[]
+    face_list = []
     index = 0
-    while index<len(faces):
+    while index < len(faces):
         num_vertices = faces[index]
-        face_list.append(faces[index+1:index+num_vertices+1])
-        index += num_vertices+1
+        face_list.append(faces[index + 1:index + num_vertices + 1])
+        index += num_vertices + 1
     list_of_vertices = [[points[pt_index] for pt_index in face] for face in face_list]
 
     return list_of_vertices

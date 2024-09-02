@@ -7,7 +7,8 @@ import numpy as np
 
 from typing import List, Tuple, Union
 
-from utils.utils_common_methods import weighted_mean
+from ..utils.utils_common_methods import weighted_mean
+from ..utils.utils_2d_projection import compute_planar_surface_area_and_centroid
 
 
 # =========================================================

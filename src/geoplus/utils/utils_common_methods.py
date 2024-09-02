@@ -6,7 +6,6 @@ import numpy as np
 from typing import List
 
 
-
 def weighted_mean(values: np.ndarray, weights: List[float]) -> float:
     """
     Compute the weighted mean of a set of values.

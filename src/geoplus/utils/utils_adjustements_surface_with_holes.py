@@ -24,8 +24,8 @@ def contour_surface_with_holes(surface_boundary: List[List[int]], hole_list: Lis
     return new_surface_boundary
 
 
-def _contour_surface_with_hole(surface_boundary: List[List[int]], hole_vertex_list: List[List[int]]) \
-        -> List[List[int]]:
+def _contour_surface_with_hole(surface_boundary: List[List[float]], hole_vertex_list: List[List[float]]) \
+        -> List[List[float]]:
     """
     Contour a surface with a hole to exclude the hole from the surface, especially useful for Radiance. The hole is
         assumed to be a closed loop of vertices with the same orientation as the surface.
