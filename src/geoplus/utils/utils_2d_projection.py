@@ -16,7 +16,7 @@ def compute_planar_surface_boundary_area_and_centroid(surface_boundary: List[Lis
     :param surface_boundary: List of vertices of face
     :return are,centroid: Area of the polygon.
     """
-    point_2d, rotation_matrix, translation_vector = compute_coordinate_in_polygon_local_2d_plan(
+    point_2d, rotation_matrix, translation_vector = compute_planar_surface_coordinate_in_local_2d_plan(
         surface_boundary)
     # Convert to shapely polygon, with powerful methods for 2D geometries
     polygon_2d_in_local_plan: Polygon = Polygon(point_2d)
@@ -27,22 +27,39 @@ def compute_planar_surface_boundary_area_and_centroid(surface_boundary: List[Lis
     return area, centroid.tolist()
 
 
-def compute_coordinate_in_polygon_local_2d_plan(surface_boundary: List[List[float]]) -> np.ndarray:
+def compute_planar_surface_coordinate_in_local_2d_plan(surface_boundary: List[List[float]]) -> np.ndarray:
     """
     Transform 3D points to a 2D plane using the provided rotation matrix and translation vector.
     :param surface_boundary: List of vertices of the polygon in 3D.
     :return
     """
-    points_3d = np.array(surface_boundary)
-    rotation_matrix, translation_vector = compute_transformation_to_local_2d_plan(points_3d)
+    rotation_matrix, translation_vector = compute_transformation_to_local_2d_plan(surface_boundary)
     points_2d = transform_3d_vertices_to_2d(surface_boundary, rotation_matrix, translation_vector)
     return points_2d.tolist()
 
 
-def compute_transformation_to_local_2d_plan(points_3d: np.ndarray) -> [np.ndarray, np.ndarray]:
+def compute_transformation_to_local_2d_plan(surface_boundary: List[List[float]]) -> [np.ndarray, np.ndarray]:
     """
     Compute the transformation matrix that maps 3D coordinates to the plane of the polygon.
     Ensures that the points are not collinear.
+    """
+
+    normal = get_normal_vector_of_planar_surface(surface_boundary=surface_boundary)
+
+    # Calculate the transformation matrix to the plane
+    z_axis = normal
+    x_axis ,y_axis = get_planar_surface_plan_vectors_from_normal(surface_boundary, normal)
+    rotation_matrix = np.vstack([np.array(x_axis), np.array(y_axis), np.array(z_axis)]).T
+    translation_vector = -np.array(surface_boundary[0])  # Translate the first point to the origin
+
+    return rotation_matrix, translation_vector
+
+
+def get_normal_vector_of_planar_surface(surface_boundary: List[List[float]]) -> List[List[float]]:
+    """
+
+    :param surface_boundary:
+    :return:
     """
 
     def are_points_collinear(p1, p2, p3):
@@ -51,6 +68,7 @@ def compute_transformation_to_local_2d_plan(points_3d: np.ndarray) -> [np.ndarra
         cross_product = np.cross(v1, v2)
         return np.allclose(cross_product, 0)
 
+    points_3d = np.array(surface_boundary)
     # Try to find a valid set of points to define the plane
     p1 = points_3d[0]
     p2 = points_3d[1]
@@ -67,15 +85,31 @@ def compute_transformation_to_local_2d_plan(points_3d: np.ndarray) -> [np.ndarra
     normal = np.cross(v1, v2)
     normal = normal / np.linalg.norm(normal)  # Normalize
 
-    # Calculate the transformation matrix to the plane
-    z_axis = normal
-    x_axis = v1 / np.linalg.norm(v1)
-    y_axis = np.cross(z_axis, x_axis)
+    return normal.tolist()
 
-    rotation_matrix = np.vstack([x_axis, y_axis, z_axis]).T
-    translation_vector = -p1
 
-    return rotation_matrix, translation_vector
+def get_planar_surface_plan_vectors_from_normal(surface_boundary: List[List[float]], normal: List[float],
+                                                reference_vector: List[float] = None)-> [List[float], List[float]]:
+    """
+
+    :param surface_boundary:
+    :param normal:
+    :param reference_vector:
+    :return:
+    """
+    point_3d = np.array(surface_boundary)
+    normal = np.array(normal)
+    if reference_vector is None:
+        v1 = point_3d[1] - point_3d[0]
+        v1 = v1 / np.linalg.norm(v1)
+    else:
+        v1 = np.array(reference_vector)
+    v2 = np.cross(normal, v1)
+
+    return v1.tolist(), v2.tolist()
+
+
+
 
 
 def transform_3d_vertices_to_2d(points_3d: List[float], rotation_matrix: ndarray,

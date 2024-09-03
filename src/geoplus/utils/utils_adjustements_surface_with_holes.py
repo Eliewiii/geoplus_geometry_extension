@@ -8,7 +8,7 @@ import numpy as np
 from typing import List
 
 
-def contour_surface_with_holes(surface_boundary: List[List[int]], hole_list: List[List[List[int]]]):
+def contour_surface_with_holes(surface_boundary: List[List[float]], hole_list: List[List[List[float]]]):
     """
     Contour a surface with multiple holes to exclude the holes from the surface, especially useful for Radiance.
     It assumes that the holes are closed loops of vertices with the same orientation as the surface and that the holes

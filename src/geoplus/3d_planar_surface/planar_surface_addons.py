@@ -10,9 +10,8 @@ from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and
 from ..utils.utils_adjustements_surface_with_holes import contour_surface_with_holes
 
 
-
 # =========================================================
-# Public Functions
+# Centroid and Area
 # =========================================================
 def compute_planar_surface_area_and_centroid(vertex_list: List[List[float]]) -> (float, ndarray):
     """
@@ -55,13 +54,23 @@ def compute_planar_surface_centroid(vertex_list: List[List[float]]) -> ndarray:
     return centroid
 
 
-def contour_numpy_array_planar_surface_with_holes(vertex_list: List[List[float]],
-                                                  hole_list: List[List[List[float]]]):
+# =========================================================
+# Contour around holes
+# =========================================================
+def contour_planar_surface_with_holes(vertex_list: List[List[float]],
+                                      hole_list: List[List[List[float]]]) -> List[List[float]]:
     """
-
-    :param vertex_list:
-    :param hole_array_list:
-    :return:
+    Contour a surface with holes. Especially useful for certain applications, such as Radiance, that cannot accept
+        geometries/objects with holes, where the holes have to be excluded from the surface.
+    Note that:
+     - This function does not check if the holes are inside and coplanar with the surface, it is taken from granted.
+    :param vertex_list: List of the vertices of the surface (in 3D). #todo: check if it works in 3D
+    :param hole_list: List of the list of vertices of the holes (in 3D).
+    :return: List of the vertices of the surface contour without the holes.
     """
     return contour_surface_with_holes(surface_boundary=vertex_list.tolist(),
-                                                   hole_list=hole_list)
+                                      hole_list=hole_list)
+
+# =========================================================
+# Corners
+# =========================================================
