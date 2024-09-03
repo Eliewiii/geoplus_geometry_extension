@@ -12,7 +12,7 @@ from .utils_2d_projection import get_normal_vector_of_planar_surface, get_planar
     transform_3d_vertices_to_2d, transform_2d_vertices_to_3d
 
 
-def compute_corners_from_existing_points(surface_boundary: List[List[float]]) -> List[List[float]]:
+def compute_planar_surface_corners_from_existing_points(surface_boundary: List[List[float]]) -> List[List[float]]:
     """
     Computes the corners of a 3D planar surface using existing points of the surface.
     Aims to compute the top, bottom, right, and left corners of the surface.
@@ -58,11 +58,9 @@ def compute_corners_from_existing_points(surface_boundary: List[List[float]]) ->
     potential_v_min_points = local_point_2d[np.isclose(local_point_2d[:, 1], min_v)]
     potential_v_max_points = local_point_2d[np.isclose(local_point_2d[:, 1], max_v)]
 
-    # Select unique points based on priority
-
     min_u_point = select_unique_point(potential_u_min_points, [],
                                       to_be_selected_points=[potential_v_min_points, potential_v_max_points,
-                                                             potential_u_max_points])
+                                                             potential_u_max_points], )
     max_u_point = select_unique_point(potential_u_max_points, [min_u_point],
                                       to_be_selected_points=[potential_v_min_points, potential_v_max_points])
     max_v_point = select_unique_point(potential_v_max_points, [min_u_point, max_u_point],

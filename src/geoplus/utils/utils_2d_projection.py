@@ -43,9 +43,7 @@ def compute_transformation_to_local_2d_plan(surface_boundary: List[List[float]])
     Compute the transformation matrix that maps 3D coordinates to the plane of the polygon.
     Ensures that the points are not collinear.
     """
-
     normal = get_normal_vector_of_planar_surface(surface_boundary=surface_boundary)
-
     # Calculate the transformation matrix to the plane
     z_axis = normal
     x_axis ,y_axis = get_planar_surface_plan_vectors_from_normal(surface_boundary, normal)
@@ -66,7 +64,7 @@ def get_normal_vector_of_planar_surface(surface_boundary: List[List[float]]) -> 
         v1 = p2 - p1
         v2 = p3 - p1
         cross_product = np.cross(v1, v2)
-        return np.allclose(cross_product, 0)
+        return np.allclose(cross_product, 0.)
 
     points_3d = np.array(surface_boundary)
     # Try to find a valid set of points to define the plane
@@ -101,15 +99,15 @@ def get_planar_surface_plan_vectors_from_normal(surface_boundary: List[List[floa
     normal = np.array(normal)
     if reference_vector is None:
         v1 = point_3d[1] - point_3d[0]
-        v1 = v1 / np.linalg.norm(v1)
     else:
-        v1 = np.array(reference_vector)
+        if np.allclose(np.cross(normal, np.array(reference_vector)), 0.):
+            raise ValueError("Reference vector cannot be colinear with the normal vector")
+        v1 = np.array(reference_vector) - np.dot(np.array(reference_vector), np.array(normal)) * np.array(normal)
+
+    v1 = np.array(normalize_vector(v1))
     v2 = np.cross(normal, v1)
 
     return v1.tolist(), v2.tolist()
-
-
-
 
 
 def transform_3d_vertices_to_2d(points_3d: List[float], rotation_matrix: ndarray,
@@ -138,3 +136,15 @@ def get_polygon_centroid(polygon: Polygon) -> (float, float):
     # Compute the centroid
     centroid = polygon.centroid
     return centroid.x, centroid.y
+
+def normalize_vector(vector: List[float]) -> List[float]:
+    """
+    Normalize a vector.
+    :param vector: List[float], the vector to normalize.
+    :return: List[float], the normalized vector.
+    """
+    vector = np.array(vector)
+    try :
+        return (vector / np.linalg.norm(vector)).tolist()
+    except ZeroDivisionError:
+        raise ValueError("Cannot normalize a zero vector")
