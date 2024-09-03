@@ -72,28 +72,39 @@ def test_get_planar_surface_plan_vectors_from_normal():
     assert np.allclose(v1_1, normalize_vector([0,1,1]))
 
 
-def test_centroid_of_surface_with_hole():
+
+def test_compute_planar_surface_coordinate_in_local_2d_plan():
     """
 
     :return:
     """
-    # Example usage:
-    surface = [
-        [0, 0, 0],
-        [10, 0, 0],
-        [10, 10, 10],
-        [0, 10, 10]
-    ]
-    hole = [
-        [3, 3, 3],
-        [6, 3, 3],
-        [6, 6, 6],
-        [3, 6, 6]
-    ]
-    # Get the contoured surface with multiple holes
-    contoured_surface = contour_surface_with_hole(surface, hole)
-    polydata_obj = polydata_from_vertices(contoured_surface)
+    points_2d = compute_planar_surface_coordinate_in_local_2d_plan(surface_boundary=surface_0)
+    assert np.allclose(np.array(points_2d[0]), np.array(surface_0)[0][:2])
+    #Preservation of the distance
+    assert np.allclose(np.linalg.norm(np.array(points_2d[0])-np.array(points_2d[1])),np.linalg.norm(np.array(surface_0[0])-np.array(surface_0[1])))
 
-    area, centroid = compute_area_and_centroid_of_polydata(polydata_obj)
-    print("")
-    print(area, centroid)
+def compute_planar_surface_boundary_area_and_centroid():
+    """
+
+    :return:
+    """
+    area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_0)
+    assert np.allclose(area, 100.)
+    assert np.allclose(centroid, [5., 5., 0.])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
