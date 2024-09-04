@@ -93,9 +93,14 @@ def get_normal_vector_of_planar_surface(surface_boundary: List[List[float]]) -> 
         v2 = points_3d[(i + 2) % n] - points_3d[(i + 1) % n]
         total_oriented_angle += compute_oriented_angle(v1, v2, normal)
 
+
     # Adjust the normal vector based on the total oriented angle
-    if not np.allclose(total_oriented_angle, 360):
+    if np.allclose(total_oriented_angle, -360):
         normal = -normal  # Flip the normal if the angle is -360 degrees
+    elif np.allclose(total_oriented_angle, 360):
+        pass
+    else:
+        raise ValueError("The sum of the oriented angles is not equal to 360 degrees, the might not be a planar surface")
 
     return normal.tolist()
 

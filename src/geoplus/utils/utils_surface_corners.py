@@ -4,9 +4,7 @@ Utilities for computing the corners of a planar 3D or 2D surface.
 
 import numpy as np
 
-from typing import List, Tuple, Union
-
-from numpy.random import normal
+from typing import List
 
 from .utils_2d_projection import get_normal_vector_of_planar_surface, get_planar_surface_plan_vectors_from_normal, \
     transform_3d_vertices_to_2d, transform_2d_vertices_to_3d
@@ -68,14 +66,17 @@ def compute_planar_surface_corners_from_existing_points(surface_boundary: List[L
     min_v_point = select_unique_point(potential_v_min_points, [min_u_point, max_u_point, max_v_point],
                                       to_be_selected_points=[])
     # Corners are the combinations of these extreme points
-    corners_local = np.array([
+    corners_local = [
         max_u_point,
         min_u_point,
         max_v_point,
         min_v_point
-    ])
+    ]
     # Transform the corners back to the original coordinate system
-    corners_original_coordinate_system = transform_2d_vertices_to_3d(point_2d=corners_local.tolist())
+    corners_original_coordinate_system = [transform_2d_vertices_to_3d(point_2d=point,
+                                                                      rotation_matrix=rotation_matrix,
+                                                                      translation_vector=translation_vector)
+                                          for point in corners_local]
 
     return corners_original_coordinate_system
 
