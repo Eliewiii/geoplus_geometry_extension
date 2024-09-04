@@ -2,12 +2,12 @@
 Addional functions for numpy arrays planar surfaces operations.
 """
 
-import numpy as np
 from numpy import ndarray
 from typing import List
 
 from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and_centroid
 from ..utils.utils_adjustements_surface_with_holes import contour_surface_with_holes
+from ..utils.utils_surface_corners import compute_planar_surface_corners_from_existing_points
 
 
 # =========================================================
@@ -74,3 +74,11 @@ def contour_planar_surface_with_holes(vertex_list: List[List[float]],
 # =========================================================
 # Corners
 # =========================================================
+
+def compute_planar_surface_corners(vertex_list: List[List[float]]) -> List[List[float]]:
+    """
+    Compute the corners of a planar surface defined by a list of vertices.
+    :param vertex_list: List of vertices of the surface.
+    :return: List of the corners of the surface.
+    """
+    return compute_planar_surface_corners_from_existing_points(vertex_list)

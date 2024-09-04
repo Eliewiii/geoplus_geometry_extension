@@ -8,7 +8,7 @@ import numpy as np
 from typing import List, Tuple, Union
 
 from ..utils.utils_common_methods import weighted_mean
-from ..utils.utils_2d_projection import compute_planar_surface_area_and_centroid
+from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and_centroid
 
 
 # =========================================================
@@ -55,7 +55,7 @@ def _compute_area_and_centroid(polydata: pv.PolyData) -> (float, List[List[float
     centroid_list = []
     list_of_face_vertices = _get_list_of_vertices_of_each_face(polydata)
     for face_vertices in list_of_face_vertices:
-        face_area, face_centroid = compute_planar_surface_area_and_centroid(face_vertices)
+        face_area, face_centroid = compute_planar_surface_boundary_area_and_centroid(face_vertices)
         area_list.append(face_area)
         centroid_list.append(face_centroid)
     centroid = weighted_mean(np.array(centroid_list), area_list)
