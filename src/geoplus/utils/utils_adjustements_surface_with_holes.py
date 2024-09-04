@@ -13,6 +13,9 @@ def contour_surface_with_holes(surface_boundary: List[List[float]], hole_list: L
     Contour a surface with multiple holes to exclude the holes from the surface, especially useful for Radiance.
     It assumes that the holes are closed loops of vertices with the same orientation as the surface and that the holes
         don't intersect.
+    Some weird results may occur with exotic surfaces or holes, with convex surfaces/holes, that might lead to self
+        intersecting surfaces. The code can be adjusted to avoid this issue, but it will imply more complexity
+        and verifications making the function much slower. It might be implemented in the future.
     :param surface_boundary: List of vertices of the surface in 2 or 3 dimensions, it must be consistent with the holes.
     :param hole_list: List of lists of vertices of the holes in 2 or 3 dimensions, it must be consistent with the surface.
     :return new_surface_boundary: List of vertices of the contoured surface with the holes.

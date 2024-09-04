@@ -19,19 +19,18 @@ surface_1 = [
     [10., 10., 10.],
     [0., 10., 10.]
 ]
+# Convex surface
 surface_2 = [
-    [0, 0, 0],
-    [10, 0, 0],
-    [10, 10, 10],
-    [0, 10, 10]
+    [6., 10., 0.],
+    [6., 6., 0.],
+    [4., 6., 0.],
+    [4., 10., 0.],
+    [0., 10., 0.],
+    [0., 0., 0.],
+    [10., 0., 0.],
+    [10., 10., 0.]
 ]
 
-surface_3 = [
-    [0, 0, 0],
-    [10, 0, 0],
-    [10, 10, 10],
-    [0, 10, 10]
-]
 
 z_axis = np.array([0, 0, 1])
 x_axis = np.array([1, 0, 0])
@@ -48,6 +47,9 @@ def test_get_normal_vector_of_planar_surface():
     # surface 1
     normal_1 = np.array(get_normal_vector_of_planar_surface(surface_boundary=surface_1))
     assert np.allclose(normal_1, np.array(normalize_vector([0., -1., 1.])))
+    # surface 2 with convex surface that can require adjustments of the normal vector
+    normal_2 = np.array(get_normal_vector_of_planar_surface(surface_boundary=surface_2))
+    assert np.allclose(normal_2, z_axis)
 
 def test_get_planar_surface_plan_vectors_from_normal():
     """
@@ -83,7 +85,7 @@ def test_compute_planar_surface_coordinate_in_local_2d_plan():
     #Preservation of the distance
     assert np.allclose(np.linalg.norm(np.array(points_2d[0])-np.array(points_2d[1])),np.linalg.norm(np.array(surface_0[0])-np.array(surface_0[1])))
 
-def compute_planar_surface_boundary_area_and_centroid():
+def test_compute_planar_surface_boundary_area_and_centroid():
     """
 
     :return:
@@ -91,6 +93,9 @@ def compute_planar_surface_boundary_area_and_centroid():
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_0)
     assert np.allclose(area, 100.)
     assert np.allclose(centroid, [5., 5., 0.])
+    area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_1)
+    assert np.allclose(area, 10.0*np.sqrt(200))
+    assert np.allclose(centroid, [5., 5., 5.])
 
 
 

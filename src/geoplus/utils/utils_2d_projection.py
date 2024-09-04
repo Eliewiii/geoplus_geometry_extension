@@ -24,7 +24,7 @@ def compute_planar_surface_boundary_area_and_centroid(surface_boundary: List[Lis
     centroid_local_plan = get_polygon_centroid(polygon_2d_in_local_plan)
     centroid = transform_2d_vertices_to_3d(point_2d=centroid_local_plan, rotation_matrix=rotation_matrix,
                                            translation_vector=translation_vector)
-    return area, centroid.tolist()
+    return area, centroid
 
 
 def compute_planar_surface_coordinate_in_local_2d_plan(surface_boundary: List[List[float]]) -> np.ndarray:
@@ -35,7 +35,7 @@ def compute_planar_surface_coordinate_in_local_2d_plan(surface_boundary: List[Li
     """
     rotation_matrix, translation_vector = compute_transformation_to_local_2d_plan(surface_boundary)
     points_2d = transform_3d_vertices_to_2d(surface_boundary, rotation_matrix, translation_vector)
-    return points_2d.tolist()
+    return points_2d.tolist(), rotation_matrix, translation_vector
 
 
 def compute_transformation_to_local_2d_plan(surface_boundary: List[List[float]]) -> [np.ndarray, np.ndarray]:
@@ -46,7 +46,7 @@ def compute_transformation_to_local_2d_plan(surface_boundary: List[List[float]])
     normal = get_normal_vector_of_planar_surface(surface_boundary=surface_boundary)
     # Calculate the transformation matrix to the plane
     z_axis = normal
-    x_axis ,y_axis = get_planar_surface_plan_vectors_from_normal(surface_boundary, normal)
+    x_axis, y_axis = get_planar_surface_plan_vectors_from_normal(surface_boundary, normal)
     rotation_matrix = np.vstack([np.array(x_axis), np.array(y_axis), np.array(z_axis)]).T
     translation_vector = -np.array(surface_boundary[0])  # Translate the first point to the origin
 
@@ -55,7 +55,9 @@ def compute_transformation_to_local_2d_plan(surface_boundary: List[List[float]])
 
 def get_normal_vector_of_planar_surface(surface_boundary: List[List[float]]) -> List[List[float]]:
     """
-
+    Compute the normal vector of a planar surface defined by a list of vertices.
+    This method ensures that the normal vector is oriented correctly, even with convex surfaces, and theoretically
+        self-intersecting surfaces.
     :param surface_boundary:
     :return:
     """
@@ -81,13 +83,25 @@ def get_normal_vector_of_planar_surface(surface_boundary: List[List[float]]) -> 
     v1 = p2 - p1
     v2 = p3 - p1
     normal = np.cross(v1, v2)
-    normal = normal / np.linalg.norm(normal)  # Normalize
+    normal = np.array(normalize_vector(normal))
+
+    # Calculate the total oriented angle
+    total_oriented_angle = 0
+    n = len(points_3d)
+    for i in range(n):
+        v1 = points_3d[(i + 1) % n] - points_3d[i]
+        v2 = points_3d[(i + 2) % n] - points_3d[(i + 1) % n]
+        total_oriented_angle += compute_oriented_angle(v1, v2, normal)
+
+    # Adjust the normal vector based on the total oriented angle
+    if not np.allclose(total_oriented_angle, 360):
+        normal = -normal  # Flip the normal if the angle is -360 degrees
 
     return normal.tolist()
 
 
 def get_planar_surface_plan_vectors_from_normal(surface_boundary: List[List[float]], normal: List[float],
-                                                reference_vector: List[float] = None)-> [List[float], List[float]]:
+                                                reference_vector: List[float] = None) -> [List[float], List[float]]:
     """
 
     :param surface_boundary:
@@ -137,6 +151,7 @@ def get_polygon_centroid(polygon: Polygon) -> (float, float):
     centroid = polygon.centroid
     return centroid.x, centroid.y
 
+
 def normalize_vector(vector: List[float]) -> List[float]:
     """
     Normalize a vector.
@@ -144,7 +159,24 @@ def normalize_vector(vector: List[float]) -> List[float]:
     :return: List[float], the normalized vector.
     """
     vector = np.array(vector)
-    try :
+    try:
         return (vector / np.linalg.norm(vector)).tolist()
     except ZeroDivisionError:
         raise ValueError("Cannot normalize a zero vector")
+
+
+def compute_oriented_angle(v1, v2, normal):
+    """
+    Compute the oriented angle between two vectors according to a reference normal vector.
+    :param v1:
+    :param v2:
+    :param normal:
+    :return:
+    """
+    # Calculate angle between vectors
+    angle = np.arccos(np.clip(np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2)), -1.0, 1.0))
+    # Determine the orientation using the cross product
+    cross_product = np.cross(v1, v2)
+    if np.dot(cross_product, normal) < 0:
+        angle = -angle
+    return np.degrees(angle)
