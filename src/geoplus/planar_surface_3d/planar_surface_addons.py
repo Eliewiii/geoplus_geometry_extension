@@ -68,7 +68,7 @@ def contour_planar_surface_with_holes(vertex_list: List[List[float]],
     :param hole_list: List of the list of vertices of the holes (in 3D).
     :return: List of the vertices of the surface contour without the holes.
     """
-    return contour_surface_with_holes(surface_boundary=vertex_list.tolist(),
+    return contour_surface_with_holes(surface_boundary=vertex_list,
                                       hole_list=hole_list)
 
 # =========================================================
