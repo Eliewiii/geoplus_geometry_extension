@@ -1,7 +1,7 @@
 __all__=["planar_surface_3d", "utils"]
 
 from .planar_surface_3d.planar_surface_addons import compute_planar_surface_area_and_centroid, compute_planar_surface_area, \
-    compute_planar_surface_centroid, contour_planar_surface_with_holes, compute_planar_surface_corners_from_existing_points
+    compute_planar_surface_centroid, contour_planar_surface_with_holes, compute_planar_surface_corners
 
 from .planar_surface_3d.planar_surface_numpy_array_addons import compute_numpy_array_planar_surface_area_and_centroid, \
     compute_numpy_array_planar_surface_area, compute_numpy_array_planar_surface_centroid, \
