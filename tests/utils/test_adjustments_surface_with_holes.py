@@ -75,7 +75,8 @@ def test_contour_surface_with_hole():
     area_0, centroid_0 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_0)
     normal_0 = get_normal_vector_of_planar_surface(surface_boundary=surface_0)
     ## Hole 0
-    area_hole_0, centroid_hole_0 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_0_sur_0)
+    area_hole_0, centroid_hole_0 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_0_sur_0)
     new_boundary = _contour_surface_with_hole(surface_boundary=surface_0, hole_vertex_list=hole_0_sur_0)
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=new_boundary)
     assert np.allclose(area, area_0 - area_hole_0)
@@ -84,7 +85,8 @@ def test_contour_surface_with_hole():
     normal = get_normal_vector_of_planar_surface(surface_boundary=new_boundary)
     assert np.allclose(normal, normal_0)
     ## Hole 1
-    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_1_sur_0)
+    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_1_sur_0)
     new_boundary = _contour_surface_with_hole(surface_boundary=surface_0, hole_vertex_list=hole_1_sur_0)
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=new_boundary)
     print("")
@@ -101,7 +103,8 @@ def test_contour_surface_with_hole():
     area_1, centroid_1 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_1)
     normal_1 = get_normal_vector_of_planar_surface(surface_boundary=surface_1)
     ## Hole 0
-    area_hole_0, centroid_hole_0 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_0_sur_1)
+    area_hole_0, centroid_hole_0 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_0_sur_1)
     new_boundary = _contour_surface_with_hole(surface_boundary=surface_1, hole_vertex_list=hole_0_sur_1)
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=new_boundary)
     assert np.allclose(area, area_1 - area_hole_0)
@@ -110,7 +113,8 @@ def test_contour_surface_with_hole():
     normal = get_normal_vector_of_planar_surface(surface_boundary=new_boundary)
     assert np.allclose(normal, normal_1)
     ## Hole 1
-    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_1_sur_1)
+    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_1_sur_1)
     new_boundary = _contour_surface_with_hole(surface_boundary=surface_1, hole_vertex_list=hole_1_sur_1)
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=new_boundary)
     assert np.allclose(area, area_1 - area_hole_1)
@@ -118,11 +122,6 @@ def test_contour_surface_with_hole():
     # Check the normal vector
     normal = get_normal_vector_of_planar_surface(surface_boundary=new_boundary)
     assert np.allclose(normal, normal_1)
-
-
-
-
-
 
 
 def test_contour_surface_with_holes():
@@ -136,9 +135,11 @@ def test_contour_surface_with_holes():
     area_0, centroid_0 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_0)
     normal_0 = get_normal_vector_of_planar_surface(surface_boundary=surface_0)
     # Hole 1
-    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_1_sur_0)
+    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_1_sur_0)
     # Hole 2
-    area_hole_2, centroid_hole_2 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_2_sur_0)
+    area_hole_2, centroid_hole_2 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_2_sur_0)
     new_boundary = contour_surface_with_holes(surface_boundary=surface_0, hole_list=[hole_1_sur_0,
                                                                                      hole_2_sur_0])
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=new_boundary)
@@ -154,9 +155,11 @@ def test_contour_surface_with_holes():
     area_1, centroid_1 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=surface_1)
     normal_1 = get_normal_vector_of_planar_surface(surface_boundary=surface_1)
     # Hole 1
-    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_1_sur_1)
+    area_hole_1, centroid_hole_1 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_1_sur_1)
     # Hole 2
-    area_hole_2, centroid_hole_2 = compute_planar_surface_boundary_area_and_centroid(surface_boundary=hole_2_sur_1)
+    area_hole_2, centroid_hole_2 = compute_planar_surface_boundary_area_and_centroid(
+        surface_boundary=hole_2_sur_1)
     new_boundary = contour_surface_with_holes(surface_boundary=surface_1, hole_list=[hole_1_sur_1,
                                                                                      hole_2_sur_1])
     area, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=new_boundary)
@@ -165,5 +168,3 @@ def test_contour_surface_with_holes():
     # Check the normal vector
     normal = get_normal_vector_of_planar_surface(surface_boundary=new_boundary)
     assert np.allclose(normal, normal_1)
-
-
