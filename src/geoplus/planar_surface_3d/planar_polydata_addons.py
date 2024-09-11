@@ -15,6 +15,16 @@ from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and
 # Private Helper Functions
 # =========================================================
 
+def _polydata_from_list_of_vertices(vertex_list: List[List[float]]) -> pv.PolyData:
+    """
+    Create a PyVista PolyData object from a list of vertices, for a single face only.
+    :param vertex_list:
+    :return:
+    """
+    vertices= np.array(vertex_list)
+    faces = np.array([[len(vertices)] + list(range(len(vertices)))])
+    return pv.PolyData(vertices, faces)
+
 def _get_list_of_vertices_of_each_face(polydata: pv.PolyData) -> List[List[List[float]]]:
     """
     Get the list of vertices for each face of the PolyData object.

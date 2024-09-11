@@ -5,17 +5,18 @@ Addional functions for numpy arrays planar surfaces operations.
 from numpy import ndarray
 from typing import List
 
-from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and_centroid
+from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and_centroid, \
+    get_normal_vector_of_planar_surface
 from ..utils.utils_adjustements_surface_with_holes import contour_surface_with_holes
 from ..utils.utils_surface_corners import compute_planar_surface_corners_from_existing_points
 
 
 # =========================================================
-# Centroid and Area
+# Centroid, Area and Normal
 # =========================================================
 def compute_planar_surface_area_and_centroid(vertex_list: List[List[float]]) -> (float, ndarray):
     """
-    Compute the area and centroid of a 3D planar surface defined by a numpy array of vertices.
+    Compute the area and centroid of a 3D planar surface defined by a list of  vertices.
     Note that this method is more accurate in specific cases, such as:
         - for 3D planar surfaces (that some libraries like shapely can't handle natively)
         - for surfaces with holes, being part of the contour of the surface, that libraries like
@@ -28,7 +29,7 @@ def compute_planar_surface_area_and_centroid(vertex_list: List[List[float]]) -> 
 
 def compute_planar_surface_area(vertex_list: List[List[float]]) -> float:
     """
-    Compute the area and centroid of a 3D planar surface defined by a numpy array of vertices.
+    Compute the area and centroid of a 3D planar surface defined by a list of vertices.
     Note that this method is more accurate in specific cases, such as:
         - for 3D planar surfaces (that some libraries like shapely can't handle natively)
         - for surfaces with holes, being part of the contour of the surface, that libraries like
@@ -42,7 +43,7 @@ def compute_planar_surface_area(vertex_list: List[List[float]]) -> float:
 
 def compute_planar_surface_centroid(vertex_list: List[List[float]]) -> ndarray:
     """
-    Compute the centroid of a 3D planar surface defined by a numpy array of vertices.
+    Compute the centroid of a 3D planar surface defined by a list of vertices.
     Note that this method is more accurate in specific cases, such as:
         - for 3D planar surfaces (that some libraries like shapely can't handle natively)
         - for surfaces with holes, being part of the contour of the surface, that libraries like
@@ -52,6 +53,15 @@ def compute_planar_surface_centroid(vertex_list: List[List[float]]) -> ndarray:
     """
     _, centroid = compute_planar_surface_boundary_area_and_centroid(surface_boundary=vertex_list)
     return centroid
+
+
+def compute_planar_surface_normal(vertex_list: List[List[float]]) -> List[float]:
+    """
+    Compute the normal vector of a 3D planar surface defined by a list of vertices.
+    :param vertex_list: NumPy array of vertices of face. List of list are also accepted.
+    :return normal: Normal vector of the polygon.
+    """
+    return get_normal_vector_of_planar_surface(vertex_list)
 
 
 # =========================================================
@@ -70,6 +80,7 @@ def contour_planar_surface_with_holes(vertex_list: List[List[float]],
     """
     return contour_surface_with_holes(surface_boundary=vertex_list,
                                       hole_list=hole_list)
+
 
 # =========================================================
 # Corners
