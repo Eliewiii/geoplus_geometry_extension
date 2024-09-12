@@ -2,11 +2,12 @@
 Function to contour a surface with holes in order to use it in Radiance simulations.
 """
 
-
 import pyvista as pv
 import numpy as np
 
 from typing import List
+
+from .utils_common_methods import remove_redundant_vertices
 
 
 def contour_surface_with_holes(surface_boundary: List[List[float]], hole_list: List[List[List[float]]]) -> List[
@@ -45,7 +46,7 @@ def compute_exterior_boundary_of_surface_with_contoured_holes(surface_boundary: 
     for i in range(num_vertices):
         # The vertex i is not checked as if it was removed but it is the "beginning" of a hole, it will not delete this hole.
         # Worst case it can only create redundant vertices to delete
-        for j in range(i+1,num_vertices):
+        for j in range(i + 1, num_vertices):
             if j in vertex_index_to_remove:
                 continue
             if np.allclose(surface_boundary[j], surface_boundary[i]):  # Maybe add a specific tolerance
@@ -54,14 +55,13 @@ def compute_exterior_boundary_of_surface_with_contoured_holes(surface_boundary: 
                     the same.
                 If they are different, We do not consider it as an iner-hole , but more like a convex surface
                 """
-                if np.allclose(surface_boundary[j-1], surface_boundary[i+1]):
-                    vertex_index_to_remove.extend([k for k in range(i+1,j+1)])
+                if np.allclose(surface_boundary[j - 1], surface_boundary[i + 1]):
+                    vertex_index_to_remove.extend([k for k in range(i + 1, j + 1)])
     exterior_surface_boundary = [vertex for i, vertex in enumerate(surface_boundary) if i not in vertex_index_to_remove]
     # make sure two consecutive vertices are not the same
-    exterior_surface_boundary = [vertex for i, vertex in enumerate(exterior_surface_boundary) if (exterior_surface_boundary[i] != exterior_surface_boundary[(i+1)%len(exterior_surface_boundary)])]
+    exterior_surface_boundary = remove_redundant_vertices(exterior_surface_boundary)
 
     return exterior_surface_boundary
-
 
 
 def _contour_surface_with_hole(surface_boundary: List[List[float]], hole_vertex_list: List[List[float]]) \
