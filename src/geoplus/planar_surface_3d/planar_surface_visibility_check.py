@@ -8,10 +8,10 @@ from typing import List, Tuple
 
 
 
-def are_planar_surface_vertices_seeing_each_other(vertex_surface_1: List[float], vertex_surface_2: List[float],
+def are_planar_surface_vertices_facing_each_other(vertex_surface_1: List[float], vertex_surface_2: List[float],
                                          normal_1: List[float], normal_2: List[float]):
     """
-    Check if two planar surfaces are seeing each other.
+    Check if two planar surfaces are facing each other. It does not consider obstacles between the two surfaces.
     This method can be run for multiple couples of vertices of the two surfaces for better accuracy.
     :param vertex_surface_1: A vertex of the first surface
     :param vertex_surface_2: A vertex of the second surface
