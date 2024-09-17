@@ -12,7 +12,8 @@ import numpy.typing as npt
 
 from ..utils.utils_2d_projection import compute_planar_surface_boundary_area_and_centroid, \
     get_normal_vector_of_planar_surface
-from ..utils.utils_adjustements_surface_with_holes import contour_surface_with_holes
+from ..utils.utils_adjustements_surface_with_holes import contour_surface_with_holes, \
+    compute_exterior_boundary_of_surface_with_contoured_holes
 from ..utils.utils_surface_corners import compute_planar_surface_corners_from_existing_points
 
 
@@ -20,7 +21,7 @@ from ..utils.utils_surface_corners import compute_planar_surface_corners_from_ex
 # Centroid, Area and Normal
 # =========================================================
 def compute_numpy_array_planar_surface_area_and_centroid(surface_boundary: npt.NDArray[np.float64]) -> (
-float, npt.NDArray[np.float64]):
+        float, npt.NDArray[np.float64]):
     """
     Compute the area and centroid of a 3D planar surface defined by a numpy array of vertices.
     :param surface_boundary: Numpy array of vertices of face.
@@ -84,6 +85,18 @@ def contour_numpy_array_planar_surface_with_holes(surface_boundary: npt.NDArray[
                                       hole_list=hole_array_list)
 
 
+def compute_exterior_boundary_of_numpy_array_planar_surface_with_contoured_holes(
+        surface_boundary: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
+    """
+    Remove the holes from the surface boundary to get the exterior boundary of the surface, especially useful if
+        a surface is contoured with holes to transform it into a surface format that do not handle holes properly,
+        such as Pyvista.
+    :param surface_boundary:
+    :return:
+    """
+    return compute_exterior_boundary_of_surface_with_contoured_holes(surface_boundary)
+
+
 # =========================================================
 # Corners
 # =========================================================
@@ -106,7 +119,5 @@ def numpy_array_surface_to_polydata(surface_boundary: npt.NDArray[np.float64]) -
     :param numpy_array: Numpy array to convert.
     :return: PyVista PolyData object.
     """
-    return PolyData([vertex for vertex in surface_boundary],[[len(surface_boundary), *range(len(surface_boundary))]])
-
-
-
+    return PolyData([vertex for vertex in surface_boundary],
+                    [[len(surface_boundary), *range(len(surface_boundary))]])
