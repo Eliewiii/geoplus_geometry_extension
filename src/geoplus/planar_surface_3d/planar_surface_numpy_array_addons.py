@@ -116,8 +116,19 @@ def compute_numpy_array_planar_surface_corners(surface_boundary: npt.NDArray[np.
 def numpy_array_surface_to_polydata(surface_boundary: npt.NDArray[np.float64]) -> PolyData:
     """
     Convert a numpy array to a PyVista PolyData object.
-    :param numpy_array: Numpy array to convert.
+    :param surface_boundary:
     :return: PyVista PolyData object.
     """
-    return PolyData([vertex for vertex in surface_boundary],
-                    [[len(surface_boundary), *range(len(surface_boundary))]])
+    return PolyData(surface_boundary,np.array(
+                    [[len(surface_boundary), *range(len(surface_boundary))]]))
+    # vertices = []  # initialize the list of vertices
+    # # format of the face expected by PyVista [number of vertices, index vertex 1, index vertex 2 ...] <=> [n, 0,1,2...]
+    # face = [len(surface_boundary)]
+    # # convert the vertices to a list of coordinates and add the vertices index to the face
+    # for index, vertex in enumerate(surface_boundary):
+    #     vertices.append([vertex[0], vertex[1], vertex[2]])  # add the coordinates of the vertices
+    #     face.append(index)
+    # vertices = np.array(vertices)  # convert into numpy array, makes it faster for Pyvista to process
+    #
+    # return PolyData(vertices, face)
+
