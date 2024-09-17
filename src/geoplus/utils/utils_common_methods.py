@@ -40,5 +40,5 @@ def remove_redundant_vertices(surface_boundary: npt.NDArray[np.float64]) -> npt.
     :param surface_boundary:
     :return: List of vertices of the surface boundary with redundant vertices removed.
     """
-    return np.array([vertex for i, vertex in enumerate(surface_boundary) if
+    return np.array([vertex for i, vertex in enumerate(surface_boundary) if not
                      (np.allclose(surface_boundary[i],surface_boundary[(i + 1) % len(surface_boundary)]))])

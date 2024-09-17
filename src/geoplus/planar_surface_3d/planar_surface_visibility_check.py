@@ -8,9 +8,7 @@ import pyvista as pv
 from typing import List
 import numpy.typing as npt
 
-from geoplus import are_planar_surface_vertices_facing_each_other
 
-from ..decorators import check_for_list_of_inputs
 
 def are_planar_surface_vertices_facing_each_other(vertex_surface_1: npt.NDArray[np.float64],
                                                   vertex_surface_2: npt.NDArray[np.float64],

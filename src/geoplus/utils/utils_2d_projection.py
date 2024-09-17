@@ -20,13 +20,13 @@ def compute_planar_surface_boundary_area_and_centroid(surface_boundary: npt.NDAr
     :param surface_boundary: List of vertices of face
     :return are,centroid: Area of the polygon.
     """
-    point_2d, rotation_matrix, translation_vector = compute_planar_surface_coordinate_in_local_2d_plan(
+    vertices_2d, rotation_matrix, translation_vector = compute_planar_surface_coordinate_in_local_2d_plan(
         surface_boundary)
     # Convert to shapely polygon, with powerful methods for 2D geometries
-    polygon_2d_in_local_plan: Polygon = Polygon(point_2d)
+    polygon_2d_in_local_plan: Polygon = Polygon(vertices_2d)
     area = polygon_2d_in_local_plan.area  # Isometric transformation, so the area is preserved
     centroid_local_plan = get_polygon_centroid(polygon_2d_in_local_plan)
-    centroid = transform_2d_vertices_to_3d(point_2d=centroid_local_plan, rotation_matrix=rotation_matrix,
+    centroid = transform_2d_vertices_to_3d(vertices_2d=centroid_local_plan, rotation_matrix=rotation_matrix,
                                            translation_vector=translation_vector)
     return area, centroid
 
@@ -38,8 +38,8 @@ def compute_planar_surface_coordinate_in_local_2d_plan(surface_boundary: npt.NDA
     :return
     """
     rotation_matrix, translation_vector = compute_transformation_to_local_2d_plan(surface_boundary)
-    points_2d = transform_3d_vertices_to_2d(surface_boundary, rotation_matrix, translation_vector)
-    return points_2d, rotation_matrix, translation_vector
+    vertices_2d = transform_3d_vertices_to_2d(surface_boundary, rotation_matrix, translation_vector)
+    return vertices_2d, rotation_matrix, translation_vector
 
 
 def compute_transformation_to_local_2d_plan(surface_boundary: npt.NDArray[np.float64]) -> [np.ndarray, np.ndarray]:
@@ -124,7 +124,7 @@ def get_planar_surface_plan_vectors_from_normal(surface_boundary: npt.NDArray[np
     if reference_vector is None:
         # necessarilly non null as there is no redundancy
         v1 = surface_boundary_without_redundant_vertices[1] - surface_boundary_without_redundant_vertices[0]
-    elif allclose(reference_vector,np.zeros(3)):
+    elif not np.allclose(reference_vector,np.zeros(3)):
         if np.allclose(np.cross(normal, reference_vector), 0.):
             raise ValueError("Reference vector cannot be colinear with the normal vector")
         v1 = reference_vector - np.dot(reference_vector, normal) * normal # projection of the reference vector on the plane
