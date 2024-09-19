@@ -52,7 +52,7 @@ def is_ray_intersecting_context(start_point: npt.NDArray[np.float64], end_point:
                                                                               offset=offset)
     points, ind = context_polydata_mesh.ray_trace(origin=corrected_start_point,
                                                   end_point=corrected_end_point,
-                                                  first_point=False,
+                                                  first_point=True,
                                                   plot=False)
 
     if ind.size == 0:
