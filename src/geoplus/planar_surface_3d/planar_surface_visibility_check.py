@@ -8,13 +8,11 @@ import pyvista as pv
 from typing import List
 import numpy.typing as npt
 
-from geoplus import are_planar_surface_vertices_facing_each_other
-
-from ..decorators import check_for_list_of_inputs
 
 def are_planar_surface_vertices_facing_each_other(vertex_surface_1: npt.NDArray[np.float64],
                                                   vertex_surface_2: npt.NDArray[np.float64],
-                                                  normal_1: npt.NDArray[np.float64], normal_2: npt.NDArray[np.float64]):
+                                                  normal_1: npt.NDArray[np.float64],
+                                                  normal_2: npt.NDArray[np.float64]):
     """
     Check if two planar surfaces are facing each other. It does not consider obstacles between the two surfaces.
     This method can be run for multiple couples of vertices of the two surfaces for better accuracy.
@@ -50,11 +48,14 @@ def is_ray_intersecting_context(start_point: npt.NDArray[np.float64], end_point:
     :return:
     """
     corrected_start_point, corrected_end_point = _excluding_surfaces_from_ray(start_point=start_point,
-                                                                              end_point=end_point, offset=offset)
-    points, ind = context_polydata_mesh.ray_trace(origin=corrected_start_point[0], end_point=corrected_start_point[1],
-                                                  first_point=True,
+                                                                              end_point=end_point,
+                                                                              offset=offset)
+    points, ind = context_polydata_mesh.ray_trace(origin=corrected_start_point,
+                                                  end_point=corrected_end_point,
+                                                  first_point=False,
                                                   plot=False)
-    if ind == 0:
+
+    if ind.size == 0:
         return False
     else:
         return True

@@ -43,7 +43,7 @@ def compute_planar_surface_corners_from_existing_points(surface_boundary: List[L
     rotation_matrix = np.vstack([np.array(v1), np.array(v2), np.array(normal)]).T
     translation_vector = -np.array(surface_boundary[0])
     # Get the points in the 2d local coordinate system
-    local_point_2d = np.array(transform_3d_vertices_to_2d(points_3d=surface_boundary, rotation_matrix=rotation_matrix,
+    local_point_2d = np.array(transform_3d_vertices_to_2d(vertices_3d=surface_boundary, rotation_matrix=rotation_matrix,
                                                           translation_vector=translation_vector))
     # Get the minimum and maximum u and v values of the local points
     min_u = np.min(local_point_2d[:, 0])
@@ -73,7 +73,7 @@ def compute_planar_surface_corners_from_existing_points(surface_boundary: List[L
         min_v_point
     ]
     # Transform the corners back to the original coordinate system
-    corners_original_coordinate_system = [transform_2d_vertices_to_3d(point_2d=point,
+    corners_original_coordinate_system = [transform_2d_vertices_to_3d(vertices_2d=point,
                                                                       rotation_matrix=rotation_matrix,
                                                                       translation_vector=translation_vector)
                                           for point in corners_local]
