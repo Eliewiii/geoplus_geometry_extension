@@ -41,7 +41,7 @@ def compute_planar_surface_corners_from_existing_points(surface_boundary: List[L
     v1, v2 = get_planar_surface_plan_vectors_from_normal(surface_boundary=surface_boundary, normal=normal,
                                                          reference_vector=reference_vector)
     rotation_matrix = np.vstack([np.array(v1), np.array(v2), np.array(normal)]).T
-    translation_vector = -np.array(surface_boundary[0])
+    translation_vector = np.array(surface_boundary[0])
     # Get the points in the 2d local coordinate system
     local_point_2d = np.array(transform_3d_vertices_to_2d(vertices_3d=surface_boundary, rotation_matrix=rotation_matrix,
                                                           translation_vector=translation_vector))

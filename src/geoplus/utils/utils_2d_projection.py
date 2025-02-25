@@ -53,7 +53,7 @@ def compute_transformation_to_local_2d_plan(surface_boundary: npt.NDArray[np.flo
     z_axis = normal
     x_axis, y_axis = get_planar_surface_plan_vectors_from_normal(surface_boundary_without_redundant_vertices, normal)
     rotation_matrix = np.vstack([x_axis, y_axis, z_axis]).T
-    translation_vector = surface_boundary_without_redundant_vertices[0]  # Translate the first point to the origin
+    translation_vector =  surface_boundary_without_redundant_vertices[0]  # Translate the first point to the origin
 
     return rotation_matrix, translation_vector
 
@@ -142,7 +142,7 @@ def transform_3d_vertices_to_2d(vertices_3d: npt.NDArray[np.float64], rotation_m
     """
     Transform 3D points to a 2D plane using the provided rotation matrix and translation vector.
     """
-    transformed_points = (vertices_3d + translation_vector) @ rotation_matrix
+    transformed_points = (vertices_3d - translation_vector) @ rotation_matrix
     return transformed_points[:, :2]  # Keep only the first coordinates as it is a 2D projection
 
 
@@ -158,7 +158,7 @@ def transform_2d_vertices_to_3d(vertices_2d: npt.NDArray[np.float64], rotation_m
     # Inverse rotation matrix
     inv_rotation_matrix = np.linalg.inv(rotation_matrix)
     # Apply the inverse transformation
-    return (np.hstack([vertices_2d, 0]) @ inv_rotation_matrix) - translation_vector
+    return (np.hstack([vertices_2d, 0]) @ inv_rotation_matrix) + translation_vector
 
 
 def get_polygon_centroid(polygon: Polygon) -> npt.NDArray[np.float64]:
